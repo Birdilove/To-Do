@@ -6,8 +6,16 @@
     android:layout_height="match_parent"
     tools:context="com.example.love.to_do.MainActivity">
 
+
+
     <ListView
         android:id="@+id/list_todo"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="5dp" />
+
+
+
+
 </android.support.constraint.ConstraintLayout>
