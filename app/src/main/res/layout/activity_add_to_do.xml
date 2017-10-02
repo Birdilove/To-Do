@@ -17,6 +17,7 @@
         <EditText
             android:id="@+id/TodoTask"
             android:layout_width="match_parent"
+            android:text="Task"
             android:layout_height="wrap_content"
             tools:layout_editor_absoluteX="75dp"
             tools:layout_editor_absoluteY="128dp" />
@@ -25,13 +26,15 @@
             android:id="@+id/TodoDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/mdtp_select_day"
             tools:layout_editor_absoluteX="129dp"
             tools:layout_editor_absoluteY="165dp" />
 
         <Button
             android:id="@+id/Addbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="94dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ADD"
             android:layout_gravity="center"
             tools:layout_editor_absoluteX="129dp"
             tools:layout_editor_absoluteY="281dp" />

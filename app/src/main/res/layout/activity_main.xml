@@ -10,10 +10,12 @@
 
     <ListView
         android:id="@+id/list_todo"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#000000"
+        android:foregroundTint="#ffffff"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="5dp" />
+        tools:layout_editor_absoluteY="8dp" />
 
 
 

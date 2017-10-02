@@ -12,15 +12,19 @@ public class TaskDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTable = "CREATE TABLE " + TaskContract.TaskEntry.TABLE + " ( " +
+        String createTable = "CREATE TABLE " + TaskContract.TaskEntry.TABLE_NAME + " ( " +
                 TaskContract.TaskEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                TaskContract.TaskEntry.COL_TASK_TITLE + TaskContract.TaskEntry.COL_TASK_DATE +"TEXT NOT NULL)" + "";
+                TaskContract.TaskEntry.COLUMN_DATE + " TEXT NOT NULL, " +
+                TaskContract.TaskEntry.COL_TASK_TITLE + " TEXT NOT NULL )" ;
         db.execSQL(createTable);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TaskContract.TaskEntry.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + TaskContract.TaskEntry.TABLE_NAME);
+        if (newVersion > oldVersion) {
+            db.execSQL("ALTER TABLE ADD_NAME ADD COLUMN NEW_COLOUM INTEGER DEFAULT 0"); // You can add TEXT Field
+        }
         onCreate(db);
     }
 }

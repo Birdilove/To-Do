@@ -35,7 +35,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     private static final String TAG = "MainActivity";
     private TaskDbHelper mHelper;
     private ListView mTaskListView;
+    private ListView mTaskListView1;
     private ArrayAdapter<String> mAdapter;
+    private ArrayAdapter<String> mAdapter1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         setContentView(R.layout.activity_main);
         mHelper = new TaskDbHelper(this);
         mTaskListView = (ListView)findViewById(R.id.list_todo);
+        mTaskListView1 = (ListView)findViewById(R.id.list_todo);
         updateUI();
     }
 
@@ -68,8 +71,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         String task = String.valueOf(taskTextView.getText());
         //String taskdate = String.valueOf(taskDateView.getText());
         SQLiteDatabase db = mHelper.getWritableDatabase();
-        db.delete(TaskContract.TaskEntry.TABLE,
-                TaskContract.TaskEntry.COL_TASK_TITLE +  " = ?",
+        db.delete(TaskContract.TaskEntry.TABLE_NAME,
+                TaskContract.TaskEntry.COL_TASK_TITLE  +  " = ?",
                 new String[]{task});
         db.close();
         updateUI();
@@ -77,27 +80,35 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     private void updateUI() {
         ArrayList<String> taskList = new ArrayList<>();
+        ArrayList<String> taskList1 = new ArrayList<>();
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        Cursor cursor = db.query(TaskContract.TaskEntry.TABLE,
+        Cursor cursor = db.query(TaskContract.TaskEntry.TABLE_NAME,
                 new String[]{TaskContract.TaskEntry._ID,
                         TaskContract.TaskEntry.COL_TASK_TITLE,
+                        TaskContract.TaskEntry.COLUMN_DATE,
                         },
                 null, null, null, null, null);
         while (cursor.moveToNext()) {
             int idx = cursor.getColumnIndex(TaskContract.TaskEntry.COL_TASK_TITLE);
             taskList.add(cursor.getString(idx));
+            int idx1 = cursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_DATE);
+            taskList1.add(cursor.getString(idx1));
+
         }
 
         if   (mAdapter == null) {
-            mAdapter = new ArrayAdapter<>(this,
-                    R.layout.item_todo,
-                    R.id.task_title,
-                    taskList);
+            mAdapter = new ArrayAdapter<>(this, R.layout.item_todo, R.id.task_title, taskList);
+            mAdapter1 = new ArrayAdapter<>(this, R.layout.item_todo, R.id.dateTextView, taskList1);
             mTaskListView.setAdapter(mAdapter);
-        } else {
+            mTaskListView1.setAdapter(mAdapter1);
+        }
+        else {
             mAdapter.clear();
             mAdapter.addAll(taskList);
             mAdapter.notifyDataSetChanged();
+            //mAdapter1.clear();
+            //mAdapter1.addAll(taskList1);
+            //mAdapter1.notifyDataSetChanged();
         }
         cursor.close();
         db.close();

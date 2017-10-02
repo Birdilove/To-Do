@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.love.to_do.db.TaskContract;
 import com.example.love.to_do.db.TaskDbHelper;
@@ -41,6 +42,7 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
         setContentView(R.layout.activity_add_to_do);
         mHelper = new TaskDbHelper(this);
         mTaskListView = (ListView) findViewById(R.id.list_todo);
+
         Button AddTask = (Button) findViewById(R.id.Addbutton);
         AddTask.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,21 +54,35 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
                 String taskdate = String.valueOf(ToDoDate.getText());
                 SQLiteDatabase db = mHelper.getWritableDatabase();
                 ContentValues values = new ContentValues();
-                ContentValues valuesdate = new ContentValues();
                 values.put(TaskContract.TaskEntry.COL_TASK_TITLE, task);
-                //values.put(TaskContract.TaskEntry.COL_TASK_DATE, taskdate);
-                //valuesdate.put(TaskContract.TaskEntry.COL_TASK_DATE, taskdate);
-                db.insertWithOnConflict(TaskContract.TaskEntry.TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-                //db.insertWithOnConflict(TaskContract.TaskEntry.TABLE, null, valuesdate, SQLiteDatabase.CONFLICT_REPLACE);
+                values.put(TaskContract.TaskEntry.COLUMN_DATE, taskdate);
+                db.insertWithOnConflict(TaskContract.TaskEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
                 db.close();
+                datatransfer();
             }
         });
 
         EditText ToDoDate = (EditText) findViewById(R.id.TodoDate);
-        ToDoDate.setOnClickListener(new View.OnClickListener()
+        ToDoDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                    Calendar now = Calendar.getInstance();
+                    DatePickerDialog dpd = DatePickerDialog.newInstance(AddToDo.this,
+                            now.get(Calendar.YEAR),
+                            now.get(Calendar.MONTH),
+                            now.get(Calendar.DAY_OF_MONTH)
+                    );
+                if (b) {
+                    dpd.show(getFragmentManager(), "Datepickerdialog");
+                } else {
 
-        {
-            public void onClick (View view){
+                }
+
+            }
+        });
+        ToDoDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 Calendar now = Calendar.getInstance();
                 DatePickerDialog dpd = DatePickerDialog.newInstance(AddToDo.this,
                         now.get(Calendar.YEAR),
@@ -76,5 +92,10 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
                 dpd.show(getFragmentManager(), "Datepickerdialog");
             }
         });
+    }
+
+    private void datatransfer(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }
