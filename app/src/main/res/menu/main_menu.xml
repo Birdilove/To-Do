@@ -8,5 +8,4 @@
         android:icon="@android:drawable/ic_menu_add"
         android:title="Add Task"
         app:showAsAction="always" />
-
 </menu>

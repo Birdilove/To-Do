@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -24,16 +25,19 @@ import java.util.Calendar;
 
 public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
+
     private TaskDbHelper mHelper;
     private ListView mTaskListView;
     private ArrayAdapter<String> mAdapter;
+    //Button tododate = (Button)findViewById(R.id.newToDoChooseDateButton);
     String date;
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
         date = +dayOfMonth+"/"+(monthOfYear+1)+"/"+year;
-        EditText ToDoDate = (EditText) findViewById(R.id.TodoDate);
-        ToDoDate.setText(date);
+        //tododate.setText(date);
+        //EditText ToDoDate = (EditText) findViewById(R.id.toDoCustomTextInput);
+       // ToDoDate.setText(date);
     }
 
     @Override
@@ -43,14 +47,15 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
         mHelper = new TaskDbHelper(this);
         mTaskListView = (ListView) findViewById(R.id.list_todo);
 
-        Button AddTask = (Button) findViewById(R.id.Addbutton);
+        FloatingActionButton AddTask = (FloatingActionButton) findViewById(R.id.makeToDoFloatingActionButton);
         AddTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText ToDoTask = (EditText) findViewById(R.id.TodoTask);
-                EditText ToDoDate = (EditText) findViewById(R.id.TodoDate);
+                CustomTextInputLayout ToDoTask = (CustomTextInputLayout) findViewById(R.id.toDoCustomTextInput);
+
+                Button ToDoDate = (Button) findViewById(R.id.newToDoChooseDateButton);
                 ToDoDate.setText(date);
-                String task = String.valueOf(ToDoTask.getText());
+                String task = String.valueOf(ToDoTask.getEditText().getText());
                 String taskdate = String.valueOf(ToDoDate.getText());
                 SQLiteDatabase db = mHelper.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -59,27 +64,12 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
                 db.insertWithOnConflict(TaskContract.TaskEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
                 db.close();
                 datatransfer();
+                finish();
+                Toast.makeText(getApplicationContext(),"Added",Toast.LENGTH_SHORT).show();
             }
         });
 
-        EditText ToDoDate = (EditText) findViewById(R.id.TodoDate);
-        ToDoDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                    Calendar now = Calendar.getInstance();
-                    DatePickerDialog dpd = DatePickerDialog.newInstance(AddToDo.this,
-                            now.get(Calendar.YEAR),
-                            now.get(Calendar.MONTH),
-                            now.get(Calendar.DAY_OF_MONTH)
-                    );
-                if (b) {
-                    dpd.show(getFragmentManager(), "Datepickerdialog");
-                } else {
-
-                }
-
-            }
-        });
+        Button ToDoDate = (Button) findViewById(R.id.newToDoChooseDateButton);
         ToDoDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,6 +82,10 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
                 dpd.show(getFragmentManager(), "Datepickerdialog");
             }
         });
+
+
+
+
     }
 
     private void datatransfer(){
@@ -99,3 +93,6 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
         startActivity(intent);
     }
 }
+
+
+

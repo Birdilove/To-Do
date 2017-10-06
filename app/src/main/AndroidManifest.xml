@@ -16,7 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddToDo"></activity>
+        <activity android:name=".AddToDo" />
+        <activity android:name=".CustomTextInputLayout" />
+        <activity android:name=".SomeCustomAdapter"></activity>
     </application>
 
 </manifest>
