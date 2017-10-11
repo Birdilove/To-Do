@@ -14,6 +14,8 @@ public class TaskContract {
         public static final String TABLE_NAME = "tasks";
         public static final String COLUMN_DATE = "date";
         public static final String COL_TASK_TITLE = "title";
-
+        public static final String COL_IMAGE_HEADER = "header";
+        public static final String COL_TIME = "time";
+        public static final String COL_PRIORITY = "priority";
     }
 }

@@ -68,6 +68,30 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp">
 
+                    <ToggleButton
+                        android:id="@+id/HighPriority"
+                        android:layout_width="wrap_content"
+                        android:text="High"
+                        android:textColor="#ffffff"
+                        android:background="@color/colorPrimary"
+                        android:layout_height="wrap_content" />
+
+                    <ToggleButton
+                        android:id="@+id/MediumPriority"
+                        android:text="Medium"
+                        android:textColor="#ffffff"
+                        android:layout_width="wrap_content"
+                        android:background="@color/colorPrimary"
+                        android:layout_height="wrap_content" />
+
+                    <ToggleButton
+                        android:id="@+id/LowPriority"
+                        android:text="Low"
+                        android:textColor="#ffffff"
+                        android:layout_width="wrap_content"
+                        android:background="@color/colorPrimary"
+                        android:layout_height="wrap_content" />
+
                 </LinearLayout>
 
                 <LinearLayout

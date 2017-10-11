@@ -7,19 +7,23 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.example.love.to_do.db.TaskContract;
 import com.example.love.to_do.db.TaskDbHelper;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     private static final String TAG = "MainActivity";
@@ -31,7 +35,18 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     SimpleCursorAdapter mAdapter;
     private Cursor mCursor;
     private SQLiteDatabase mDB;
+    //private ListView taskslist = (ListView)findViewById(R.id.list_todo);
 
+    /*public void listviewmenu (){
+
+        taskslist.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +69,16 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             case R.id.action_add_task:
                 Intent Addtodo = new Intent(this, AddToDo.class);
                 startActivity(Addtodo);
+            case R.id.reschedule:
+                Intent reschedule = new Intent(this, AddToDo.class);
+                //startActivity(Addtodo);
         }
         return false;
     }
 
     public void deleteTask(View view) {
         View parent = (View) view.getParent();
-        TextView taskTextView = (TextView) parent.findViewById(R.id.task_title);
+        TextView taskTextView = (TextView) parent.findViewById(R.id.toDoListItemTextview);
         //TextView taskDateView = (TextView) parent.findViewById(R.id.dateTextView);
         String task = String.valueOf(taskTextView.getText());
         //String taskdate = String.valueOf(taskDateView.getText());
@@ -79,28 +97,37 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 new String[]{TaskContract.TaskEntry._ID,
                         TaskContract.TaskEntry.COL_TASK_TITLE,
                         TaskContract.TaskEntry.COLUMN_DATE,
+                        TaskContract.TaskEntry.COL_TIME,
+                        TaskContract.TaskEntry.COL_PRIORITY,
+                        TaskContract.TaskEntry.COL_IMAGE_HEADER,
                 },
                 null, null, null, null, null);
-        mAdapter = new SimpleCursorAdapter(this,
+                mAdapter = new SimpleCursorAdapter(this,
                 R.layout.item_todo,
                 cursor,
                 // Displayed data source column names
                 new String[]{
                         TaskContract.TaskEntry.COL_TASK_TITLE,
-                        TaskContract.TaskEntry.COLUMN_DATE},
+                        TaskContract.TaskEntry.COLUMN_DATE,
+                        TaskContract.TaskEntry.COL_TIME,
+                        TaskContract.TaskEntry.COL_PRIORITY,
+                        TaskContract.TaskEntry.COL_IMAGE_HEADER},
                 // respective layout id's for the displayed data
                 new int[]{
-                        R.id.task_title,
-                        R.id.dateTextView},
+                        R.id.toDoListItemTextview,
+                        R.id.Task_date_View,
+                        R.id.Task_Time_View,
+                        R.id.priority,
+                        R.id.toDoListItemColorImageView},
                 0
         );
-
         mTaskListView.setAdapter(mAdapter);
     }
 
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
 
     }
+
 }
 
 
