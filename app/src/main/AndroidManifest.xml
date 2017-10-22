@@ -18,7 +18,8 @@
         </activity>
         <activity android:name=".AddToDo" />
         <activity android:name=".CustomTextInputLayout" />
-        <activity android:name=".SomeCustomAdapter"></activity>
+        <activity android:name=".SomeCustomAdapter" />
+        <activity android:name=".Reschedule_Activity"></activity>
     </application>
 
 </manifest>

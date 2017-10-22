@@ -12,18 +12,19 @@ import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import com.example.love.to_do.db.TaskContract;
 import com.example.love.to_do.db.TaskDbHelper;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
+import java.util.Date;
 import static android.graphics.Color.GREEN;
 import static android.graphics.Color.RED;
 import static android.graphics.Color.YELLOW;
@@ -40,13 +41,15 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
     private String time;
     private String Priority;
     private TextView Priority_TextView;
+    private Date d;
+    private DatePicker check;
+    private Button ToDoDate;
 
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        date = "Due on:"+dayOfMonth+"/"+(monthOfYear+1)+"/"+year;
-        Button ToDoDate = (Button) findViewById(R.id.newToDoChooseDateButton);
-        ToDoDate.setText(date);
+        date =  + dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+            setDate(dayOfMonth,monthOfYear + 1,year);
     }
 
     @Override
@@ -211,6 +214,21 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
                 }
             }
         });
+    }
+
+    public void setDate(int year, int month, int day) {
+        Calendar calendar = Calendar.getInstance();
+        Calendar reminderCalendar = Calendar.getInstance();
+        reminderCalendar.set(year, month, day);
+
+        //if (reminderCalendar.before(calendar)) {
+          //  Toast.makeText(this, "My time-machine is a bit rusty", Toast.LENGTH_LONG).show();
+            //return;
+        //}
+        //else{
+            ToDoDate = (Button) findViewById(R.id.newToDoChooseDateButton);
+            ToDoDate.setText(date);
+        //}
     }
 }
 

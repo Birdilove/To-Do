@@ -1,29 +1,39 @@
 package com.example.love.to_do;
 
 //import android.app.DatePickerDialog;
+import android.annotation.TargetApi;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.format.DateFormat;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.example.love.to_do.db.TaskContract;
 import com.example.love.to_do.db.TaskDbHelper;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+
+import static android.R.attr.id;
 
 public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     private static final String TAG = "MainActivity";
@@ -34,27 +44,19 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     //private ArrayAdapter<String> mAdapter1;
     SimpleCursorAdapter mAdapter;
     private Cursor mCursor;
+    private String orderBy;
     private SQLiteDatabase mDB;
-    //private ListView taskslist = (ListView)findViewById(R.id.list_todo);
+    private int year;
+    private int month;
+    private int day;
 
-    /*public void listviewmenu (){
-
-        taskslist.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mHelper = new TaskDbHelper(this);
-        mTaskListView = (ListView)findViewById(R.id.list_todo);
-        mTaskListView1 = (ListView)findViewById(R.id.list_todo);
+        mTaskListView = (ListView) findViewById(R.id.list_todo);
         UpdateUI();
     }
 
@@ -70,8 +72,10 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 Intent Addtodo = new Intent(this, AddToDo.class);
                 startActivity(Addtodo);
             case R.id.reschedule:
-                Intent reschedule = new Intent(this, AddToDo.class);
-                //startActivity(Addtodo);
+                //Intent reschedule = new Intent(this, Reschedule_Activity.class);
+                //startActivity(reschedule);
+                UpdateData();
+                UpdateUI();
         }
         return false;
     }
@@ -84,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         //String taskdate = String.valueOf(taskDateView.getText());
         SQLiteDatabase db = mHelper.getWritableDatabase();
         db.delete(TaskContract.TaskEntry.TABLE_NAME,
-                TaskContract.TaskEntry.COL_TASK_TITLE  +  " = ?",
+                TaskContract.TaskEntry.COL_TASK_TITLE + " = ?",
                 new String[]{task});
         db.close();
         UpdateUI();
@@ -102,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                         TaskContract.TaskEntry.COL_IMAGE_HEADER,
                 },
                 null, null, null, null, null);
-                mAdapter = new SimpleCursorAdapter(this,
+        mAdapter = new SimpleCursorAdapter(this,
                 R.layout.item_todo,
                 cursor,
                 // Displayed data source column names
@@ -128,6 +132,44 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     }
 
+
+    public void UpdateData() {
+        Calendar cal = Calendar.getInstance();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        Cursor cursor = db.query(TaskContract.TaskEntry.TABLE_NAME,
+                new String[]{TaskContract.TaskEntry._ID,
+                        TaskContract.TaskEntry.COLUMN_DATE,
+                },
+                null, null, null, null, null);
+        while (cursor.moveToFirst())
+        {
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            String formattedDate = formatter.format(c.getTime());
+            String GetDate = cursor.getString(cursor.getColumnIndex("date"));
+
+            try {
+                Date date1 = null;
+                Date date2 = null;
+                date1 = formatter.parse(GetDate);
+                date2 = formatter.parse(formattedDate);
+
+                if (date1.compareTo(date2) < 0) {
+
+                    ContentValues cv = new ContentValues();
+                    cv.put(TaskContract.TaskEntry.COLUMN_DATE, formattedDate); //These Fields should be your String values of actual column names
+                    db.update(TaskContract.TaskEntry.TABLE_NAME, cv, "_id="+1, null);
+                    Toast.makeText(this, "DAMN! IT WORKS", Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+            catch(ParseException e){
+
+            }
+        }
+            cursor.close();
+    }
+
 }
 
 
@@ -136,47 +178,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
 
 
-    /*private void updateUI() {
-        ArrayList<String> taskList = new ArrayList<>();
-        ArrayList<String> taskList1 = new ArrayList<>();
-        SQLiteDatabase db = mHelper.getReadableDatabase();
-        Cursor cursor = db.query(TaskContract.TaskEntry.TABLE_NAME,
-                new String[]{TaskContract.TaskEntry._ID,
-                        TaskContract.TaskEntry.COL_TASK_TITLE,
-                        TaskContract.TaskEntry.COLUMN_DATE,
-                },
-                null, null, null, null, null);
-        while (cursor.moveToNext()) {
-            int idx = cursor.getColumnIndex(TaskContract.TaskEntry.COL_TASK_TITLE);
-            taskList.add(cursor.getString(idx));
-            Log.d("DBTITLE","Title extracted from Cursor = " + cursor.getString(idx) + " for Row " + cursor.getPosition());
-            int idx1 = cursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_DATE);
-            taskList1.add(cursor.getString(idx1));
-
-        }
-
-        if   (mAdapter == null) {
-            final ArrayList<String> filteredList = new ArrayList<>();
-
-            SomeCustomAdapter adapter = new SomeCustomAdapter(this, taskList);
-
-
-            //mAdapter = new ArrayAdapter<>(this, R.layout.item_todo, R.id.task_title, taskList);
-            //mAdapter1 = new ArrayAdapter<>(this, R.layout.item_todo, R.id.dateTextView, taskList1);
-            //mTaskListView.setAdapter(mAdapter);
-            //mTaskListView1.setAdapter(mAdapter1);
-        }
-        else {
-            mAdapter.clear();
-            mAdapter.addAll(taskList);
-            mAdapter.notifyDataSetChanged();
-            //mAdapter1.clear();
-            //mAdapter1.addAll(taskList1);
-            //mAdapter1.notifyDataSetChanged();
-        }
-        cursor.close();
-        db.close();
-    }
 
 
 
@@ -184,46 +185,5 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
 
 
-/* final EditText taskEditText = new EditText(this);
-                final AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                    .setTitle("Add a new task")
-                    .setMessage("What do you want to do next?")
-                    .setView(taskEditText);
 
-                LayoutInflater inflater = this.getLayoutInflater();
-                builder.setView(inflater.inflate(R.layout.multipleedittext, null));
-                builder.setNeutralButton("Select Date", new DialogInterface.OnClickListener(){
-                            public void onClick(DialogInterface dialog, int which){
-                        Calendar now = Calendar.getInstance();
-                        DatePickerDialog dpd = DatePickerDialog.newInstance( MainActivity.this,
-                               now.get(Calendar.YEAR),
-                               now.get(Calendar.MONTH),
-                               now.get(Calendar.DAY_OF_MONTH)
-                                );
-                                dpd.show(getFragmentManager(), "Datepickerdialog");
 
-                            }
-                })
-                        .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String task = String.valueOf(taskEditText.getText());
-                                SQLiteDatabase db = mHelper.getWritableDatabase();
-                                ContentValues values = new ContentValues();
-                                values.put(TaskContract.TaskEntry.COL_TASK_TITLE, task);
-                                db.insertWithOnConflict(TaskContract.TaskEntry.TABLE,
-                                        null,
-                                        values,
-                                        SQLiteDatabase.CONFLICT_REPLACE);
-                                db.close();
-                                updateUI();
-                            }
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .create();
-                builder.show();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);*/
-////

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/relative"
+    android:id="@+id/relative_Edit"
     tools:context="com.example.love.to_do.MainActivity"
     tools:layout_editor_absoluteY="81dp"
     tools:layout_editor_absoluteX="0dp"
@@ -10,20 +10,9 @@
 
 
     <ListView
-        android:id="@+id/list_todo"
-        
+        android:id="@+id/reschedule_list"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         tools:layout_editor_absoluteY="8dp"
         tools:layout_editor_absoluteX="8dp" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:id="@+id/reschedule"
-        android:layout_alignBottom="@+id/list_todo"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
-        android:text="Reschedule"
-        android:layout_below="@+id/list_todo"/>
-
 </RelativeLayout>
