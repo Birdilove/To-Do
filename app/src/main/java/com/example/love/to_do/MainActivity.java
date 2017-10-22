@@ -67,17 +67,19 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_add_task:
-                Intent Addtodo = new Intent(this, AddToDo.class);
-                startActivity(Addtodo);
-            case R.id.reschedule:
-                //Intent reschedule = new Intent(this, Reschedule_Activity.class);
-                //startActivity(reschedule);
-                UpdateData();
-                UpdateUI();
+
+        int id = item.getItemId();
+
+        if (id == R.id.action_add_task) {
+            Intent Addtodo = new Intent(this, AddToDo.class);
+            startActivity(Addtodo);
         }
-        return false;
+
+        if (id == R.id.reschedule) {
+            UpdateData();
+            UpdateUI();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void deleteTask(View view) {
@@ -134,31 +136,34 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
 
     public void UpdateData() {
-        Calendar cal = Calendar.getInstance();
+
         SQLiteDatabase db = mHelper.getReadableDatabase();
         Cursor cursor = db.query(TaskContract.TaskEntry.TABLE_NAME,
                 new String[]{TaskContract.TaskEntry._ID,
                         TaskContract.TaskEntry.COLUMN_DATE,
                 },
                 null, null, null, null, null);
+
         while (cursor.moveToFirst())
         {
+
             Calendar c = Calendar.getInstance();
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String formattedDate = formatter.format(c.getTime());
-            String GetDate = cursor.getString(cursor.getColumnIndex("date"));
+            String DateDB = cursor.getString(cursor.getColumnIndex("date"));
 
             try {
-                Date date1 = null;
-                Date date2 = null;
-                date1 = formatter.parse(GetDate);
-                date2 = formatter.parse(formattedDate);
+                Date TaskDateDB = null;
+                Date CurrentDate = null;
+                TaskDateDB = formatter.parse(DateDB);
+                CurrentDate = formatter.parse(formattedDate);
+                int idx1 = cursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_DATE);
 
-                if (date1.compareTo(date2) < 0) {
+                if (TaskDateDB.before(CurrentDate)) {
 
                     ContentValues cv = new ContentValues();
                     cv.put(TaskContract.TaskEntry.COLUMN_DATE, formattedDate); //These Fields should be your String values of actual column names
-                    db.update(TaskContract.TaskEntry.TABLE_NAME, cv, "_id="+1, null);
+                    db.update(TaskContract.TaskEntry.TABLE_NAME, cv, String.valueOf(idx1), null);
                     Toast.makeText(this, "DAMN! IT WORKS", Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -166,8 +171,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             catch(ParseException e){
 
             }
+
         }
-            cursor.close();
+
     }
 
 }
