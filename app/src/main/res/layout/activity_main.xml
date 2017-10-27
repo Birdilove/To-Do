@@ -17,13 +17,6 @@
         tools:layout_editor_absoluteY="8dp"
         tools:layout_editor_absoluteX="8dp" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:id="@+id/reschedule"
-        android:layout_alignBottom="@+id/list_todo"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
-        android:text="Reschedule"
-        android:layout_below="@+id/list_todo"/>
+
 
 </RelativeLayout>

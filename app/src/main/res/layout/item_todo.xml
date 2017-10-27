@@ -70,6 +70,22 @@
             android:layout_alignBottom="@+id/Task_Time_View"
             android:layout_toRightOf="@+id/Task_Time_View"
             android:layout_toEndOf="@+id/Task_Time_View" />
+
+        <Button
+            android:onClick="deleteTask"
+            android:id="@+id/buttondelete"
+            android:layout_width="50dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="Delete"
+            android:textColor="@color/colorAccent"
+            android:background="@color/colorPrimary"
+            android:layout_alignBaseline="@+id/Task_date_View"
+            android:layout_alignBottom="@+id/Task_date_View"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 
 

@@ -46,9 +46,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     private Cursor mCursor;
     private String orderBy;
     private SQLiteDatabase mDB;
-    private int year;
-    private int month;
-    private int day;
+
 
 
     @Override
@@ -76,7 +74,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         }
 
         if (id == R.id.reschedule) {
-            UpdateData();
+            //UpdateData();
+            updateDates2();
             UpdateUI();
         }
         return super.onOptionsItemSelected(item);
@@ -85,9 +84,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     public void deleteTask(View view) {
         View parent = (View) view.getParent();
         TextView taskTextView = (TextView) parent.findViewById(R.id.toDoListItemTextview);
-        //TextView taskDateView = (TextView) parent.findViewById(R.id.dateTextView);
         String task = String.valueOf(taskTextView.getText());
-        //String taskdate = String.valueOf(taskDateView.getText());
         SQLiteDatabase db = mHelper.getWritableDatabase();
         db.delete(TaskContract.TaskEntry.TABLE_NAME,
                 TaskContract.TaskEntry.COL_TASK_TITLE + " = ?",
@@ -95,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         db.close();
         UpdateUI();
     }
-
     private void UpdateUI() {
 
         SQLiteDatabase db = mHelper.getReadableDatabase();
@@ -134,8 +130,45 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     }
 
+    public void updateDates2() {
+        //ArrayList ListDates = {""};
+        String TEMPPCOLNAME = "checkdate";
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        Cursor csr;
+        csr = db.query(TaskContract.TaskEntry.TABLE_NAME,new String[]{
+                        // All existing columns
+                        "*",
+                        "rowid as uid",
+                        // generate reformatted date column named checkdate usable by date functions
+                        // i.e. converts dd/mm/yyyy to yyyy-mm-yy
+                        "substr(" + TaskContract.TaskEntry.COLUMN_DATE + ",7,4)||'-'||" +
+                                "substr(" + TaskContract.TaskEntry.COLUMN_DATE + ",4,2)||'-'||" +
+                                "substr( " + TaskContract.TaskEntry.COLUMN_DATE + ",1,2) AS " + TEMPPCOLNAME },
+                // where clause to only include properly formatted dates and those who date is less
+                // than or equaly to today's date
+                TEMPPCOLNAME + "<= date('now') AND " +
+                        "substr(" + TaskContract.TaskEntry.COLUMN_DATE + ",3,1) = '/' AND " +
+                        "substr(" + TaskContract.TaskEntry.COLUMN_DATE + ",6,1) = '/'",
+                null,null,null,null
+        );
+        while (csr.moveToNext()) {
+            String testdate = "02/11/2000";
+            ContentValues cv = new ContentValues();
+            cv.put(TaskContract.TaskEntry.COLUMN_DATE,
+                    new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
+            if (
+                    db.update(TaskContract.TaskEntry.TABLE_NAME,cv,"rowid=?",new String[]{
+                            String.valueOf(csr.getLong(csr.getColumnIndex("uid")))}
+                    ) > 0) {
+                Log.d("UPDT2","Row Updated OK.");
+            } else {
+                Log.d("UPDT2", "Update failed.");
+            }
+        }
+        csr.close();
+    }
 
-    public void UpdateData() {
+    /*public void UpdateData() {
 
         SQLiteDatabase db = mHelper.getReadableDatabase();
         Cursor cursor = db.query(TaskContract.TaskEntry.TABLE_NAME,
@@ -144,39 +177,49 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 },
                 null, null, null, null, null);
 
-        while (cursor.moveToFirst())
+        while (cursor.moveToNext())
         {
 
             Calendar c = Calendar.getInstance();
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String formattedDate = formatter.format(c.getTime());
             String DateDB = cursor.getString(cursor.getColumnIndex("date"));
-
-            try {
+            Toast.makeText(this, DateDB, Toast.LENGTH_LONG).show();
+            /*try {
                 Date TaskDateDB = null;
                 Date CurrentDate = null;
                 TaskDateDB = formatter.parse(DateDB);
                 CurrentDate = formatter.parse(formattedDate);
-                int idx1 = cursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_DATE);
-
                 if (TaskDateDB.before(CurrentDate)) {
-
+                    Toast.makeText(this, "Under If", Toast.LENGTH_LONG).show();
                     ContentValues cv = new ContentValues();
-                    cv.put(TaskContract.TaskEntry.COLUMN_DATE, formattedDate); //These Fields should be your String values of actual column names
+                    int idx1 = cursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_DATE);
+                    cv.put(TaskContract.TaskEntry.COLUMN_DATE, formattedDate);
                     db.update(TaskContract.TaskEntry.TABLE_NAME, cv, String.valueOf(idx1), null);
-                    Toast.makeText(this, "DAMN! IT WORKS", Toast.LENGTH_LONG).show();
                     return;
                 }
+                else if (CurrentDate.before(TaskDateDB)){
+                    Toast.makeText(this, "Under esle-if", Toast.LENGTH_LONG).show();
+                }
             }
+            try {
+                Date CurrentDate = null;
+                CurrentDate = formatter.parse(formattedDate);
+                ContentValues cv = new ContentValues();
+                cv.put(TaskContract.TaskEntry.COLUMN_DATE, formattedDate);
+                db.update(TaskContract.TaskEntry.TABLE_NAME, cv, "strftime('%d/%m/%Y', DATE)" <, "strftime('%d/%m/%Y',CurrentDate)");
+                return;
+            }
+
             catch(ParseException e){
 
             }
 
-        }
+        }*/
 
     }
 
-}
+
 
 
 
