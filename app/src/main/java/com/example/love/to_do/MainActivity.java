@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import static android.R.attr.id;
 
@@ -74,9 +75,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         }
 
         if (id == R.id.reschedule) {
-            //UpdateData();
             updateDates2();
             UpdateUI();
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -132,9 +133,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     public void updateDates2() {
         //ArrayList ListDates = {""};
+        Cursor csr = null;
         String TEMPPCOLNAME = "checkdate";
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        Cursor csr;
         csr = db.query(TaskContract.TaskEntry.TABLE_NAME,new String[]{
                         // All existing columns
                         "*",
@@ -151,13 +152,44 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                         "substr(" + TaskContract.TaskEntry.COLUMN_DATE + ",6,1) = '/'",
                 null,null,null,null
         );
+        Cursor cursor= null ;
+        Calendar c = Calendar.getInstance();
+        List<String> array = new ArrayList<String>();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        cursor = db.query(TaskContract.TaskEntry.TABLE_NAME,
+                new String[]{TaskContract.TaskEntry._ID,
+                        TaskContract.TaskEntry.COLUMN_DATE,
+                },
+                null, null, null, null, null);
+        String formattedDate = formatter.format(c.getTime());
+
+
+        while (cursor.moveToNext()){
+            //Getting dates into the array using Cursor.
+            String datesfromdb = cursor.getString(cursor.getColumnIndex("date"));
+            array.add(datesfromdb);
+        }
+
+        //Comparing the dates in the array to the current date.
+        ContentValues cv = new ContentValues();
+
         while (csr.moveToNext()) {
-            String testdate = "02/11/2000";
-            ContentValues cv = new ContentValues();
-            cv.put(TaskContract.TaskEntry.COLUMN_DATE,
-                    new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
+            for(int i = 0; i < array.size(); i++){
+                if(array.get(i).equals(formattedDate)){
+                    //If comparision matches, then incrementing the current date by one.
+                    c.add(Calendar.DATE, 1);
+                    formattedDate = formatter.format(c.getTime());
+
+                }
+                else{
+                    //if the date doesn't matches then returning the date to the db.update to set this date to the current task.
+                    cv.put(TaskContract.TaskEntry.COLUMN_DATE, formattedDate);
+
+                }
+            }
+
             if (
-                    db.update(TaskContract.TaskEntry.TABLE_NAME,cv,"rowid=?",new String[]{
+                     db.update(TaskContract.TaskEntry.TABLE_NAME,cv,"rowid=?",new String[]{
                             String.valueOf(csr.getLong(csr.getColumnIndex("uid")))}
                     ) > 0) {
                 Log.d("UPDT2","Row Updated OK.");
@@ -167,6 +199,86 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         }
         csr.close();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
+    public String AdaptiveReschedule(){
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String formattedDate = formatter.format(c.getTime());
+        //List array for getting all the dates from the listView(Database).
+        List<String> array = new ArrayList<String>();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        Cursor cursor= null ;
+        cursor = db.query(TaskContract.TaskEntry.TABLE_NAME,
+                new String[]{TaskContract.TaskEntry._ID,
+                        TaskContract.TaskEntry.COLUMN_DATE,
+                },
+                null, null, null, null, null);
+
+        while (cursor.moveToNext()){
+            //Getting dates into the array using Cursor.
+            String datesfromdb = cursor.getString(cursor.getColumnIndex("date"));
+            array.add(datesfromdb);
+        }
+        //Comparing the dates in the array to the current date.
+        for(int i = 0; i < array.size(); i++){
+            if(array.get(i).equals(formattedDate)){
+                //If comparision matches, then incrementing the current date by one.
+                c.add(Calendar.DATE, 1);
+                formattedDate = formatter.format(c.getTime());
+            }
+            else{
+                //if the date doesn't matches then returning the date to the db.update to set this date to the current task.
+            }
+            if(array.get(i).equals(formattedDate)){
+                c.add(Calendar.DATE, 1);
+                formattedDate = formatter.format(c.getTime());
+            }
+            else {
+
+            }
+        }
+        return formattedDate;
+    }
+
+
 
     /*public void UpdateData() {
 
@@ -217,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
         }*/
 
-    }
+}
 
 
 
