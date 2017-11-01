@@ -163,37 +163,35 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
         String formattedDate = formatter.format(c.getTime());
         while (cursor.moveToNext()) {
-            //Getting dates into the array using Cursor.
             String datesfromdb = cursor.getString(cursor.getColumnIndex("date"));
             array.add(datesfromdb);
         }
 
-        Toast.makeText(this, csr.toString() , Toast.LENGTH_SHORT).show();
         while (csr.moveToNext()) {
             for (int i = 0; i < array.size(); i++) {
                 if (array.get(i).equals(formattedDate)) {
                     c.add(Calendar.DATE, 1);
                     formattedDate = formatter.format(c.getTime());
-                    i++;
-                } 
-                else if(array.get(i).equals(formattedDate)) {
-                    cv.put(TaskContract.TaskEntry.COLUMN_DATE, formattedDate);
-
                 }
             }
-
+            cv.put(TaskContract.TaskEntry.COLUMN_DATE, formattedDate);
             if (
                     db.update(TaskContract.TaskEntry.TABLE_NAME, cv, "rowid=?", new String[]{
                             String.valueOf(csr.getLong(csr.getColumnIndex("uid")))}
                     ) > 0) {
+
                 Log.d("UPDT2", "Row Updated OK.");
             } else {
                 Log.d("UPDT2", "Update failed.");
             }
 
+            while (cursor.moveToNext()){
+                String datesfromdb = cursor.getString(cursor.getColumnIndex("date"));
+                array.add(datesfromdb);
+                Toast.makeText(this, "Last While", Toast.LENGTH_SHORT).show();
+            }
         }
     }
-
 
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
 

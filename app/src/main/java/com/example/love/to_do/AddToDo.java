@@ -48,9 +48,15 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        date =  + dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        if(dayOfMonth < 10 || monthOfYear < 10) {
+            date = "0"+dayOfMonth + "/" + "0"+(monthOfYear + 1) + "/" + year;
             setDate(dayOfMonth,monthOfYear + 1,year);
+        }
+        else {
+            date = +dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+            setDate(dayOfMonth,monthOfYear + 1,year);
+        }
+
     }
 
     @Override
@@ -218,10 +224,10 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
     }
 
     public void setDate(int year, int month, int day) {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
         Calendar reminderCalendar = Calendar.getInstance();
+        if(day < 10){
+            day  = Integer.parseInt("0" + day);
+        }
         reminderCalendar.set(year, month, day);
         ToDoDate = (Button) findViewById(R.id.newToDoChooseDateButton);
         ToDoDate.setText(date);
