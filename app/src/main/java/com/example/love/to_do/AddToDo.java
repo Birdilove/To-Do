@@ -49,6 +49,7 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
         date =  + dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             setDate(dayOfMonth,monthOfYear + 1,year);
     }
 
@@ -154,7 +155,7 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
                     HighPriority.setBackgroundResource(R.color.colorAccent);
                     HighPriority.setText("High");
                     Priority = "High";
-                    //Priority_TextView.setTextColor(RED);
+
                 }
                 else {
                     HighPriority.setBackgroundResource(R.color.colorPrimaryDark);
@@ -180,7 +181,7 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
                     MediumPriority.setBackgroundResource(R.color.colorAccent);
                     MediumPriority.setText("Medium");
                     Priority = "Medium";
-                    //Priority_TextView.setTextColor(YELLOW);
+
                 }
                 else {
                     MediumPriority.setBackgroundResource(R.color.colorPrimaryDark);
@@ -206,7 +207,7 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
                     LowPriority.setBackgroundResource(R.color.colorAccent);
                     LowPriority.setText("Low");
                     Priority = "Low";
-                    //Priority_TextView.setTextColor(GREEN);
+
                 }
                 else {
                     LowPriority.setBackgroundResource(R.color.colorPrimaryDark);
@@ -218,17 +219,13 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
 
     public void setDate(int year, int month, int day) {
         Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
         Calendar reminderCalendar = Calendar.getInstance();
         reminderCalendar.set(year, month, day);
+        ToDoDate = (Button) findViewById(R.id.newToDoChooseDateButton);
+        ToDoDate.setText(date);
 
-        //if (reminderCalendar.before(calendar)) {
-          //  Toast.makeText(this, "My time-machine is a bit rusty", Toast.LENGTH_LONG).show();
-            //return;
-        //}
-        //else{
-            ToDoDate = (Button) findViewById(R.id.newToDoChooseDateButton);
-            ToDoDate.setText(date);
-        //}
     }
 }
 
