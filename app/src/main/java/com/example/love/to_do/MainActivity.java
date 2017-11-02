@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     public void deleteTask(View view) {
         View parent = (View) view.getParent();
-        TextView taskTextView = (TextView) parent.findViewById(R.id.toDoListItemTextview);
+        TextView taskTextView = parent.findViewById(R.id.toDoListItemTextview);
         String task = String.valueOf(taskTextView.getText());
         SQLiteDatabase db = mHelper.getWritableDatabase();
         db.delete(TaskContract.TaskEntry.TABLE_NAME,
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                         TaskContract.TaskEntry.COL_PRIORITY,
                         TaskContract.TaskEntry.COL_IMAGE_HEADER,
                 },
-                null, null, null, null, null);
+                null, null, null, null, "date");
         mAdapter = new SimpleCursorAdapter(this,
                 R.layout.item_todo,
                 cursor,
@@ -128,21 +128,19 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         mTaskListView.setAdapter(mAdapter);
     }
 
-
     public void updateDates2() {
         SQLiteDatabase db = mHelper.getWritableDatabase();
-        Cursor cursor = null;
-        Calendar c = Calendar.getInstance();
-        List<String> array = new ArrayList<String>();
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        cursor = db.query(TaskContract.TaskEntry.TABLE_NAME,
+        Calendar c = Calendar.getInstance();
+        String formattedDate = formatter.format(c.getTime());
+        List<String> array = new ArrayList<>();
+        ContentValues cv = new ContentValues();
+        Cursor cursor = cursor = db.query(TaskContract.TaskEntry.TABLE_NAME,
                 new String[]{TaskContract.TaskEntry._ID,
                         TaskContract.TaskEntry.COLUMN_DATE,
                 },
                 null, null, null, null, null);
 
-
-        ContentValues cv = new ContentValues();
         String TEMPPCOLNAME = "checkdate";
         Cursor csr = db.query(TaskContract.TaskEntry.TABLE_NAME, new String[]{
                         // All existing columns
@@ -158,10 +156,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 TEMPPCOLNAME + "< date('now') AND " +
                         "substr(" + TaskContract.TaskEntry.COLUMN_DATE + ",3,1) = '/' AND " +
                         "substr(" + TaskContract.TaskEntry.COLUMN_DATE + ",6,1) = '/'",
-                null, null, null, null
+                null, null, null, "date"
         );
 
-        String formattedDate = formatter.format(c.getTime());
         while (cursor.moveToNext()) {
             String datesfromdb = cursor.getString(cursor.getColumnIndex("date"));
             array.add(datesfromdb);
@@ -175,20 +172,15 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 }
             }
             cv.put(TaskContract.TaskEntry.COLUMN_DATE, formattedDate);
+            c.add(Calendar.DATE, 1);
+            formattedDate = formatter.format(c.getTime());
             if (
                     db.update(TaskContract.TaskEntry.TABLE_NAME, cv, "rowid=?", new String[]{
                             String.valueOf(csr.getLong(csr.getColumnIndex("uid")))}
                     ) > 0) {
-
                 Log.d("UPDT2", "Row Updated OK.");
             } else {
                 Log.d("UPDT2", "Update failed.");
-            }
-
-            while (cursor.moveToNext()){
-                String datesfromdb = cursor.getString(cursor.getColumnIndex("date"));
-                array.add(datesfromdb);
-                Toast.makeText(this, "Last While", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -196,7 +188,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
 
     }
-
 }
 
 

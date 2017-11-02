@@ -48,15 +48,16 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        if(dayOfMonth < 10 || monthOfYear < 10) {
-            date = "0"+dayOfMonth + "/" + "0"+(monthOfYear + 1) + "/" + year;
-            setDate(dayOfMonth,monthOfYear + 1,year);
+        String daymonth = String.valueOf(dayOfMonth);
+        String monthyear = String.valueOf(monthOfYear+1);
+        if(dayOfMonth < 10) {
+            daymonth = String.valueOf("0"+dayOfMonth);
         }
-        else {
-            date = +dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
-            setDate(dayOfMonth,monthOfYear + 1,year);
+        if(monthOfYear < 9){
+            monthyear = String.valueOf("0"+monthyear);
         }
-
+        date = daymonth + "/" + (monthyear) + "/" + year;
+            setDate(dayOfMonth,monthOfYear,year);
     }
 
     @Override
@@ -79,7 +80,6 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
             @Override
             public void onClick(View view) {
                 CustomTextInputLayout ToDoTask = (CustomTextInputLayout) findViewById(R.id.toDoCustomTextInput);
-
                 Button ToDoTime = (Button) findViewById(R.id.newToDoChooseTimeButton);
                 ToDoTime.setText(time);
                 Button ToDoDate = (Button) findViewById(R.id.newToDoChooseDateButton);
@@ -156,12 +156,10 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
                     LowPriority.setBackgroundResource(R.color.colorPrimaryDark);
                     LowPriority.setText("Low");
                 }
-
                 if (HighPriority.isChecked()) {
                     HighPriority.setBackgroundResource(R.color.colorAccent);
                     HighPriority.setText("High");
                     Priority = "High";
-
                 }
                 else {
                     HighPriority.setBackgroundResource(R.color.colorPrimaryDark);
@@ -182,12 +180,10 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
                     LowPriority.setBackgroundResource(R.color.colorPrimaryDark);
                     LowPriority.setText("Low");
                 }
-
                 if (MediumPriority.isChecked()) {
                     MediumPriority.setBackgroundResource(R.color.colorAccent);
                     MediumPriority.setText("Medium");
                     Priority = "Medium";
-
                 }
                 else {
                     MediumPriority.setBackgroundResource(R.color.colorPrimaryDark);
@@ -208,14 +204,12 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
                     HighPriority.setBackgroundResource(R.color.colorPrimaryDark);
                     HighPriority.setText("High");
                 }
-
                 if (LowPriority.isChecked()) {
                     LowPriority.setBackgroundResource(R.color.colorAccent);
                     LowPriority.setText("Low");
                     Priority = "Low";
-
                 }
-                else {
+                else{
                     LowPriority.setBackgroundResource(R.color.colorPrimaryDark);
                     LowPriority.setText("Low");
                 }
@@ -225,13 +219,9 @@ public class AddToDo extends AppCompatActivity implements DatePickerDialog.OnDat
 
     public void setDate(int year, int month, int day) {
         Calendar reminderCalendar = Calendar.getInstance();
-        if(day < 10){
-            day  = Integer.parseInt("0" + day);
-        }
         reminderCalendar.set(year, month, day);
         ToDoDate = (Button) findViewById(R.id.newToDoChooseDateButton);
         ToDoDate.setText(date);
-
     }
 }
 
